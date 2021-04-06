@@ -8,7 +8,7 @@ class Server {
 
     constructor() {
 
-       // options https localhost certificate
+        // options https localhost certificate
         this.options = {
             key: fs.readFileSync('../cert/localhost.key'),
             cert: fs.readFileSync('../cert/localhost.crt')
@@ -17,7 +17,7 @@ class Server {
 
         this.app = express();
         this.port = process.env.PORT;
-        this.server = spdy.createServer(this.options,this.app);
+        this.server = spdy.createServer(this.options, this.app);
         this.io = require('socket.io')(this.server);
 
         //sockets
@@ -31,7 +31,7 @@ class Server {
         // rutas de mi aplicacion
         this.routes();
 
-        
+
 
     }
 
@@ -52,38 +52,45 @@ class Server {
     sockets() {
 
         this.io.on('connection', socket => {
-            console.log('cliente conectado', socket.id)
 
             socket.on('disconnect', () => {
-                console.log('cliente disconectado')
-            });
-            socket.on('enviar-mensaje', (payload) => {
-                console.log(payload)
+
+            }); // podemos utiliza async se grabamos en db
+            socket.on('enviar-mensaje', (payload, callback) => {
+                // el payload que recivo desde enviar mensake lo re envio enseguida
+                //this.io.emit('enviar-mensaje', payload);
+                const id = '123456';// simulamos un respuesta de una db con id 
+                
+                if (!callback) return;
+               
+                    callback({id, usuario:'super babuu'});
+            
+             
+
+                
+                //con el callback solo el cliente que ha enviado el evento riceve la respuesta del server. con emit la ricevano tutti
+                // con este callback es como se hubieramo hecho una peticion http al server pero asi la hacemos por web socket
+
+
+
+
+
             })
         });
 
 
     }
 
-   
 
-       listen() {
-            this.server.listen(this.port, () => {
-                console.log(`Server on port ${this.port}`)
-            })
-        }
-   
+
+    listen() {
+        this.server.listen(this.port, () => {
+            console.log(`Server on port ${this.port}`)
+        })
+    }
+
 
 }
 
 module.exports = Server;
 
-/*
- listen() {
-
-        spdy.createServer(this.options, this.app)
-            .listen(this.port, () => {
-                console.log(`Server on port ${this.port}`)
-            })
-    }
-*/
