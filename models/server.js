@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const spdy = require('spdy');
 const fs = require('fs');
+const { socketController } = require('../sockets/controller');
 //const { validarJSON } = require('../helpers/validarJson');
 
 class Server {
@@ -51,32 +52,7 @@ class Server {
 
     sockets() {
 
-        this.io.on('connection', socket => {
-
-            socket.on('disconnect', () => {
-
-            }); // podemos utiliza async se grabamos en db
-            socket.on('enviar-mensaje', (payload, callback) => {
-                // el payload que recivo desde enviar mensake lo re envio enseguida
-                //this.io.emit('enviar-mensaje', payload);
-                const id = '123456';// simulamos un respuesta de una db con id 
-                
-                if (!callback) return;
-               
-                    callback({id, usuario:'super babuu'});
-            
-             
-
-                
-                //con el callback solo el cliente que ha enviado el evento riceve la respuesta del server. con emit la ricevano tutti
-                // con este callback es como se hubieramo hecho una peticion http al server pero asi la hacemos por web socket
-
-
-
-
-
-            })
-        });
+        this.io.on('connection', socketController);
 
 
     }

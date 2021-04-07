@@ -43,7 +43,7 @@ btnEnviar.addEventListener('click', () => {
     socket.emit('enviar-mensaje', payload, (id) => {
 
         console.log('desde el server', id)
-
+        console.log(payload)
     });
 
 
