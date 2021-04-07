@@ -1,13 +1,13 @@
+const TicketControl = require('../models/ticket-control');
+
+const ticketControl = new TicketControl();
+
 
 const socketController = (socket) => {
 
-    console.log(`cliente conectado`, socket.id);
-
-
-    socket.on('disconnect', () => {
-
-    }); // podemos utiliza async se grabamos en db
-    socket.on('enviar-mensaje', (payload,callback) => {
+     
+   
+   socket.on('enviar-mensaje', (payload,callback) => {
         // el payload que recivo desde enviar mensake lo re envio enseguida
         //this.io.emit('enviar-mensaje', payload);
         const id = '123456';// simulamos un respuesta de una db con id 

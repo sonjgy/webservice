@@ -1,50 +1,47 @@
 
-
-const lblOnline = document.querySelector('#lblOnline');
+// Referencias del HTML
+const lblOnline  = document.querySelector('#lblOnline');
 const lblOffline = document.querySelector('#lblOffline');
-const txtMessaje = document.querySelector('#txtMessaje');
-const btnEnviar = document.querySelector('#btnEnviar');
-//socket del cliente
+const txtMensaje = document.querySelector('#txtMensaje');
+const btnEnviar  = document.querySelector('#btnEnviar');
+
+
 const socket = io();
 
-// on escucha eventos 
+
+
 socket.on('connect', () => {
+    // console.log('Conectado');
 
     lblOffline.style.display = 'none';
-    lblOnline.style.display = '';
+    lblOnline.style.display  = '';
 
-})
+});
 
 socket.on('disconnect', () => {
+    // console.log('Desconectado del servidor');
+
+    lblOnline.style.display  = 'none';
     lblOffline.style.display = '';
-    lblOnline.style.display = 'none';
+});
 
-
-})
 
 socket.on('enviar-mensaje', (payload) => {
-
-    console.log(payload)
+    console.log( payload )
 })
 
 
+btnEnviar.addEventListener( 'click', () => {
 
-btnEnviar.addEventListener('click', () => {
-    // non si manda texto plano ma un obj con muchas informaciones
-    const mensaje = txtMessaje.value;
+    const mensaje = txtMensaje.value;
     const payload = {
         mensaje,
-        id: '123abc',
+        id: '123ABC',
         fecha: new Date().getTime()
-
-
     }
-    // come terzo parametro passiamo un callback
-    socket.emit('enviar-mensaje', payload, (id) => {
-
-        console.log('desde el server', id)
-        console.log(payload)
+    
+    socket.emit( 'enviar-mensaje', payload, ( id ) => {
+        console.log('Desde el server', id );
     });
 
-
-})
+});
