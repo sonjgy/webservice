@@ -5,21 +5,56 @@ const ticketControl = new TicketControl();
 
 const socketController = (socket) => {
 
-     
-   
-   socket.on('enviar-mensaje', (payload,callback) => {
+    socket.emit('ultimo-ticket', ticketControl.ultimo);
+    socket.emit('estado-actual', ticketControl.ultimos4);
+    socket.emit('tickets-pendientes', ticketControl.tickets.length);
+
+
+    socket.on('siguiente-ticket', (payload, callback) => {
         // el payload que recivo desde enviar mensake lo re envio enseguida
         //this.io.emit('enviar-mensaje', payload);
-        const id = '123456';// simulamos un respuesta de una db con id 
-
         if (!callback) return;
+        const siguiente = ticketControl.seguiente();
+        callback(siguiente);
+        socket.broadcast.emit('tickets-pendientes', ticketControl.tickets.length);
 
-        callback({ id, usuario: 'super babuu' });
-        socket.broadcast.emit('enviar-mensaje', payload);
-        //con el callback solo el cliente que ha enviado el evento riceve la respuesta del server. con emit la ricevano tutti
-        // con este callback es como se hubieramo hecho una peticion http al server pero asi la hacemos por web socket
+    });
+
+    socket.on('atender-ticket', ({ escritorio }, callback) => {
+
+        if (!escritorio) {
+            return callback({
+                ok: false,
+                msg: 'el escritorio es obligatorio'
+            })
+        }
+
+        const ticket = ticketControl.atenderTicket(escritorio);
+        socket.broadcast.emit('estado-actual', ticketControl.ultimos4);
+        //tengo que actualizar la cola cada vez que se atiende un ticket
+        socket.emit('tickets-pendientes', ticketControl.tickets.length);
+        socket.broadcast.emit('tickets-pendientes', ticketControl.tickets.length);
+
+        if (!ticket) {
+            callback({
+                ok: false,
+                msg: ' ya no hay ticket pendientes'
+            });
+        } else {
+
+            callback({
+                ok: true,
+                ticket
+            })
+
+
+        }
 
     })
+
+
+
+
 }
 
 module.exports = {
